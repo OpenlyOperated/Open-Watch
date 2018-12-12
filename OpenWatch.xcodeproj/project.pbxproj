@@ -1,0 +1,682 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 48;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A1430640219C7D1200421EF4 /* CloudTrailService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A143063F219C7D1200421EF4 /* CloudTrailService.swift */; };
+		A1430657219D4CD900421EF4 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1430656219D4CD800421EF4 /* Utils.swift */; };
+		A1996D8F219507AB00141724 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1996D8E219507AB00141724 /* AppDelegate.swift */; };
+		A1996D91219507AB00141724 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1996D90219507AB00141724 /* ViewController.swift */; };
+		A1996D93219507AB00141724 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1996D92219507AB00141724 /* Assets.xcassets */; };
+		A1996D96219507AB00141724 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A1996D94219507AB00141724 /* Main.storyboard */; };
+		A1996DA2219507AB00141724 /* OpenWatchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1996DA1219507AB00141724 /* OpenWatchTests.swift */; };
+		A1996DAD219507AB00141724 /* OpenWatchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1996DAC219507AB00141724 /* OpenWatchUITests.swift */; };
+		A1996DBB21950BB200141724 /* MovableWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1996DBA21950BB200141724 /* MovableWindow.swift */; };
+		A1996DBD21950D4300141724 /* DataStructures.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1996DBC21950D4300141724 /* DataStructures.swift */; };
+		A1996DBF2196630100141724 /* OpenWatchEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1996DBE2196630100141724 /* OpenWatchEngine.swift */; };
+		A1F1964C21C07AE800900133 /* Credits in Resources */ = {isa = PBXBuildFile; fileRef = A1F1964B21C07AE800900133 /* Credits */; };
+		CFB77F5F76DE1639BCA4ACC8 /* Pods_OpenWatch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FFF1C69706003F8D1FEAFE2 /* Pods_OpenWatch.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A1996D9E219507AB00141724 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A1996D83219507AB00141724 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A1996D8A219507AB00141724;
+			remoteInfo = OpenWatch;
+		};
+		A1996DA9219507AB00141724 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A1996D83219507AB00141724 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A1996D8A219507AB00141724;
+			remoteInfo = OpenWatch;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		3B03804E550CA2B393E4FE4B /* Pods-OpenWatch.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OpenWatch.debug.xcconfig"; path = "Pods/Target Support Files/Pods-OpenWatch/Pods-OpenWatch.debug.xcconfig"; sourceTree = "<group>"; };
+		5FB101F44DC586E52EF812DD /* Pods_OpenWatchTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OpenWatchTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5FFF1C69706003F8D1FEAFE2 /* Pods_OpenWatch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OpenWatch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		85F4FC45CEFF369B1CDCB9A1 /* Pods_OpenWatchUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OpenWatchUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A143063F219C7D1200421EF4 /* CloudTrailService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudTrailService.swift; sourceTree = "<group>"; };
+		A1430641219CA6D200421EF4 /* OpenWatch-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OpenWatch-Bridging-Header.h"; sourceTree = "<group>"; };
+		A1430656219D4CD800421EF4 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		A1996D8B219507AB00141724 /* OpenWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OpenWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1996D8E219507AB00141724 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		A1996D90219507AB00141724 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		A1996D92219507AB00141724 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A1996D95219507AB00141724 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		A1996D97219507AB00141724 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A1996D98219507AB00141724 /* OpenWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OpenWatch.entitlements; sourceTree = "<group>"; };
+		A1996D9D219507AB00141724 /* OpenWatchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OpenWatchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1996DA1219507AB00141724 /* OpenWatchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenWatchTests.swift; sourceTree = "<group>"; };
+		A1996DA3219507AB00141724 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A1996DA8219507AB00141724 /* OpenWatchUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OpenWatchUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1996DAC219507AB00141724 /* OpenWatchUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenWatchUITests.swift; sourceTree = "<group>"; };
+		A1996DAE219507AB00141724 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A1996DBA21950BB200141724 /* MovableWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovableWindow.swift; sourceTree = "<group>"; };
+		A1996DBC21950D4300141724 /* DataStructures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStructures.swift; sourceTree = "<group>"; };
+		A1996DBE2196630100141724 /* OpenWatchEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenWatchEngine.swift; sourceTree = "<group>"; };
+		A1F1964B21C07AE800900133 /* Credits */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Credits; sourceTree = SOURCE_ROOT; };
+		E0BCB4EDA04A6A3BD4D356B8 /* Pods-OpenWatch.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OpenWatch.release.xcconfig"; path = "Pods/Target Support Files/Pods-OpenWatch/Pods-OpenWatch.release.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A1996D88219507AB00141724 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFB77F5F76DE1639BCA4ACC8 /* Pods_OpenWatch.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1996D9A219507AB00141724 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1996DA5219507AB00141724 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4C2C260502FF2CCC995AE6FA /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				3B03804E550CA2B393E4FE4B /* Pods-OpenWatch.debug.xcconfig */,
+				E0BCB4EDA04A6A3BD4D356B8 /* Pods-OpenWatch.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		A1430658219DD8A900421EF4 /* Audit Engine */ = {
+			isa = PBXGroup;
+			children = (
+				A1996DBC21950D4300141724 /* DataStructures.swift */,
+				A1430656219D4CD800421EF4 /* Utils.swift */,
+				A1996DBE2196630100141724 /* OpenWatchEngine.swift */,
+				A143063F219C7D1200421EF4 /* CloudTrailService.swift */,
+			);
+			path = "Audit Engine";
+			sourceTree = "<group>";
+		};
+		A1996D82219507AB00141724 = {
+			isa = PBXGroup;
+			children = (
+				A1996D8D219507AB00141724 /* OpenWatch */,
+				A1996DA0219507AB00141724 /* OpenWatchTests */,
+				A1996DAB219507AB00141724 /* OpenWatchUITests */,
+				A1996D8C219507AB00141724 /* Products */,
+				4C2C260502FF2CCC995AE6FA /* Pods */,
+				DC65F70B8516BF53E446FDDD /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		A1996D8C219507AB00141724 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A1996D8B219507AB00141724 /* OpenWatch.app */,
+				A1996D9D219507AB00141724 /* OpenWatchTests.xctest */,
+				A1996DA8219507AB00141724 /* OpenWatchUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A1996D8D219507AB00141724 /* OpenWatch */ = {
+			isa = PBXGroup;
+			children = (
+				A1F1964B21C07AE800900133 /* Credits */,
+				A1996D8E219507AB00141724 /* AppDelegate.swift */,
+				A1996D90219507AB00141724 /* ViewController.swift */,
+				A1996DBA21950BB200141724 /* MovableWindow.swift */,
+				A1996D92219507AB00141724 /* Assets.xcassets */,
+				A1996D94219507AB00141724 /* Main.storyboard */,
+				A1430658219DD8A900421EF4 /* Audit Engine */,
+				A1996D97219507AB00141724 /* Info.plist */,
+				A1996D98219507AB00141724 /* OpenWatch.entitlements */,
+				A1430641219CA6D200421EF4 /* OpenWatch-Bridging-Header.h */,
+			);
+			path = OpenWatch;
+			sourceTree = "<group>";
+		};
+		A1996DA0219507AB00141724 /* OpenWatchTests */ = {
+			isa = PBXGroup;
+			children = (
+				A1996DA1219507AB00141724 /* OpenWatchTests.swift */,
+				A1996DA3219507AB00141724 /* Info.plist */,
+			);
+			path = OpenWatchTests;
+			sourceTree = "<group>";
+		};
+		A1996DAB219507AB00141724 /* OpenWatchUITests */ = {
+			isa = PBXGroup;
+			children = (
+				A1996DAC219507AB00141724 /* OpenWatchUITests.swift */,
+				A1996DAE219507AB00141724 /* Info.plist */,
+			);
+			path = OpenWatchUITests;
+			sourceTree = "<group>";
+		};
+		DC65F70B8516BF53E446FDDD /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5FFF1C69706003F8D1FEAFE2 /* Pods_OpenWatch.framework */,
+				5FB101F44DC586E52EF812DD /* Pods_OpenWatchTests.framework */,
+				85F4FC45CEFF369B1CDCB9A1 /* Pods_OpenWatchUITests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A1996D8A219507AB00141724 /* OpenWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1996DB1219507AB00141724 /* Build configuration list for PBXNativeTarget "OpenWatch" */;
+			buildPhases = (
+				E24287B812BBA4BFEB6A40B8 /* [CP] Check Pods Manifest.lock */,
+				A1996D87219507AB00141724 /* Sources */,
+				A1996D88219507AB00141724 /* Frameworks */,
+				A1996D89219507AB00141724 /* Resources */,
+				117FBE9444F2CE4DA4139758 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OpenWatch;
+			productName = OpenWatch;
+			productReference = A1996D8B219507AB00141724 /* OpenWatch.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A1996D9C219507AB00141724 /* OpenWatchTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1996DB4219507AB00141724 /* Build configuration list for PBXNativeTarget "OpenWatchTests" */;
+			buildPhases = (
+				A1996D99219507AB00141724 /* Sources */,
+				A1996D9A219507AB00141724 /* Frameworks */,
+				A1996D9B219507AB00141724 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A1996D9F219507AB00141724 /* PBXTargetDependency */,
+			);
+			name = OpenWatchTests;
+			productName = OpenWatchTests;
+			productReference = A1996D9D219507AB00141724 /* OpenWatchTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		A1996DA7219507AB00141724 /* OpenWatchUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1996DB7219507AB00141724 /* Build configuration list for PBXNativeTarget "OpenWatchUITests" */;
+			buildPhases = (
+				A1996DA4219507AB00141724 /* Sources */,
+				A1996DA5219507AB00141724 /* Frameworks */,
+				A1996DA6219507AB00141724 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A1996DAA219507AB00141724 /* PBXTargetDependency */,
+			);
+			name = OpenWatchUITests;
+			productName = OpenWatchUITests;
+			productReference = A1996DA8219507AB00141724 /* OpenWatchUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A1996D83219507AB00141724 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0920;
+				LastUpgradeCheck = 0920;
+				ORGANIZATIONNAME = "Confirmed, Inc.";
+				TargetAttributes = {
+					A1996D8A219507AB00141724 = {
+						CreatedOnToolsVersion = 9.2;
+						LastSwiftMigration = 0920;
+						ProvisioningStyle = Manual;
+						SystemCapabilities = {
+							com.apple.Sandbox = {
+								enabled = 0;
+							};
+						};
+					};
+					A1996D9C219507AB00141724 = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+						TestTargetID = A1996D8A219507AB00141724;
+					};
+					A1996DA7219507AB00141724 = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+						TestTargetID = A1996D8A219507AB00141724;
+					};
+				};
+			};
+			buildConfigurationList = A1996D86219507AB00141724 /* Build configuration list for PBXProject "OpenWatch" */;
+			compatibilityVersion = "Xcode 8.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A1996D82219507AB00141724;
+			productRefGroup = A1996D8C219507AB00141724 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A1996D8A219507AB00141724 /* OpenWatch */,
+				A1996D9C219507AB00141724 /* OpenWatchTests */,
+				A1996DA7219507AB00141724 /* OpenWatchUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A1996D89219507AB00141724 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1F1964C21C07AE800900133 /* Credits in Resources */,
+				A1996D93219507AB00141724 /* Assets.xcassets in Resources */,
+				A1996D96219507AB00141724 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1996D9B219507AB00141724 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1996DA6219507AB00141724 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		117FBE9444F2CE4DA4139758 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-OpenWatch/Pods-OpenWatch-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AWSCore/AWSCore.framework",
+				"${BUILT_PRODUCTS_DIR}/AWSS3/AWSS3.framework",
+				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
+				"${BUILT_PRODUCTS_DIR}/DockProgress/DockProgress.framework",
+				"${BUILT_PRODUCTS_DIR}/GzipSwift/Gzip.framework",
+				"${BUILT_PRODUCTS_DIR}/SWXMLHash/SWXMLHash.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSS3.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DockProgress.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Gzip.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SWXMLHash.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-OpenWatch/Pods-OpenWatch-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E24287B812BBA4BFEB6A40B8 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-OpenWatch-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A1996D87219507AB00141724 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1996D91219507AB00141724 /* ViewController.swift in Sources */,
+				A1430640219C7D1200421EF4 /* CloudTrailService.swift in Sources */,
+				A1996DBB21950BB200141724 /* MovableWindow.swift in Sources */,
+				A1996DBD21950D4300141724 /* DataStructures.swift in Sources */,
+				A1996DBF2196630100141724 /* OpenWatchEngine.swift in Sources */,
+				A1996D8F219507AB00141724 /* AppDelegate.swift in Sources */,
+				A1430657219D4CD900421EF4 /* Utils.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1996D99219507AB00141724 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1996DA2219507AB00141724 /* OpenWatchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1996DA4219507AB00141724 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1996DAD219507AB00141724 /* OpenWatchUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A1996D9F219507AB00141724 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A1996D8A219507AB00141724 /* OpenWatch */;
+			targetProxy = A1996D9E219507AB00141724 /* PBXContainerItemProxy */;
+		};
+		A1996DAA219507AB00141724 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A1996D8A219507AB00141724 /* OpenWatch */;
+			targetProxy = A1996DA9219507AB00141724 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		A1996D94219507AB00141724 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A1996D95219507AB00141724 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		A1996DAF219507AB00141724 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		A1996DB0219507AB00141724 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+			};
+			name = Release;
+		};
+		A1996DB2219507AB00141724 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3B03804E550CA2B393E4FE4B /* Pods-OpenWatch.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = V8J3Z26F6Z;
+				INFOPLIST_FILE = OpenWatch/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.confirmed.OpenWatch;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "OpenWatch/OpenWatch-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.0;
+			};
+			name = Debug;
+		};
+		A1996DB3219507AB00141724 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E0BCB4EDA04A6A3BD4D356B8 /* Pods-OpenWatch.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = V8J3Z26F6Z;
+				INFOPLIST_FILE = OpenWatch/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.confirmed.OpenWatch;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "OpenWatch/OpenWatch-Bridging-Header.h";
+				SWIFT_VERSION = 4.0;
+			};
+			name = Release;
+		};
+		A1996DB5219507AB00141724 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = V8J3Z26F6Z;
+				INFOPLIST_FILE = OpenWatchTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.confirmed.OpenWatchTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OpenWatch.app/Contents/MacOS/OpenWatch";
+			};
+			name = Debug;
+		};
+		A1996DB6219507AB00141724 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = V8J3Z26F6Z;
+				INFOPLIST_FILE = OpenWatchTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.confirmed.OpenWatchTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OpenWatch.app/Contents/MacOS/OpenWatch";
+			};
+			name = Release;
+		};
+		A1996DB8219507AB00141724 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = V8J3Z26F6Z;
+				INFOPLIST_FILE = OpenWatchUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.confirmed.OpenWatchUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TEST_TARGET_NAME = OpenWatch;
+			};
+			name = Debug;
+		};
+		A1996DB9219507AB00141724 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = V8J3Z26F6Z;
+				INFOPLIST_FILE = OpenWatchUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.confirmed.OpenWatchUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TEST_TARGET_NAME = OpenWatch;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A1996D86219507AB00141724 /* Build configuration list for PBXProject "OpenWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1996DAF219507AB00141724 /* Debug */,
+				A1996DB0219507AB00141724 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1996DB1219507AB00141724 /* Build configuration list for PBXNativeTarget "OpenWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1996DB2219507AB00141724 /* Debug */,
+				A1996DB3219507AB00141724 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1996DB4219507AB00141724 /* Build configuration list for PBXNativeTarget "OpenWatchTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1996DB5219507AB00141724 /* Debug */,
+				A1996DB6219507AB00141724 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1996DB7219507AB00141724 /* Build configuration list for PBXNativeTarget "OpenWatchUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1996DB8219507AB00141724 /* Debug */,
+				A1996DB9219507AB00141724 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A1996D83219507AB00141724 /* Project object */;
+}
