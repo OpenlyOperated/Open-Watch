@@ -10,6 +10,12 @@
 import Cocoa
 import Gzip
 import DockProgress
+import KeychainAccess
+
+let keychain = Keychain(service: "com.confirmed.OpenWatch").synchronizable(true)
+let kAWSSecret = "AWSSecret"
+let kAWSKey = "AWSKey"
+let kAWSRegion = "AWSRegion"
 
 class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource {
     
@@ -27,6 +33,20 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
         endDate?.maxDate = Date.init(timeIntervalSinceNow: 0)
         sourceURL?.stringValue = ""
         
+        if let key = keychain[kAWSKey], let secret = keychain[kAWSSecret] {
+            awsKey?.stringValue = key
+            awsSecret?.stringValue = secret
+        }
+        
+        if let region = keychain[kAWSRegion], let itemArray = self.awsRegion?.itemArray {
+            for (index, item) in itemArray.enumerated() {
+                if item.identifier?.rawValue == region {
+                    self.awsRegion?.selectItem(at: index)
+                }
+            }
+        }
+        
+        
     }
     
     @IBAction func startAnalyzing(sender : NSButton) {
@@ -41,8 +61,13 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
         let endDate = (self.endDate?.dateValue)!
         let awsKey = (self.awsKey?.stringValue)!
         let awsSecret = (self.awsSecret?.stringValue)!
+        let awsRegion = (self.awsRegion?.selectedItem!.identifier?.rawValue)!
         
-        engine = OpenWatchEngine(awsAccessKey: awsKey, awsSecretKey: awsSecret)
+        keychain[kAWSSecret] = awsSecret
+        keychain[kAWSKey] = awsKey
+        keychain[kAWSRegion] = awsRegion
+        
+        engine = OpenWatchEngine(awsAccessKey: awsKey, awsSecretKey: awsSecret, awsRegion: awsRegion)
         engine.getParametersState = (getParametersCheckbox?.state)!
         engine.safeBringupState = (safeBringupCheckbox?.state)!
         engine.roleState = (roleCheckbox?.state)!
@@ -70,7 +95,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
                 }
             },
             auditFinished: {
-                DispatchQueue.main.async { self.updateUI() }
+                DispatchQueue.main.async { self.updateUI(); }
                 self.unfreezeUI()
             }
         )
@@ -145,7 +170,6 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     }
     
     
-    
     func freezeUI() {
         DispatchQueue.main.async() {
             self.flowLogsCheckbox?.isEnabled = false
@@ -159,6 +183,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
             self.endDate?.isEnabled = false
             self.awsKey?.isEnabled = false
             self.awsSecret?.isEnabled = false
+            self.awsRegion?.isEnabled = false
             self.chooseFolderButton?.isEnabled = false
         }
     }
@@ -176,6 +201,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
             self.endDate?.isEnabled = false //eventually allow end date selection
             self.awsKey?.isEnabled = true
             self.awsSecret?.isEnabled = true
+            self.awsRegion?.isEnabled = true
             self.chooseFolderButton?.isEnabled = true
         }
     }
@@ -296,6 +322,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     
     @IBOutlet var awsKey : NSTextField?
     @IBOutlet var awsSecret : NSTextField?
+    @IBOutlet var awsRegion : NSPopUpButton?
     
     @IBOutlet var sourceTab : NSTabView?
     @IBOutlet var startDate : NSDatePicker?

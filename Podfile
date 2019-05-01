@@ -11,4 +11,5 @@ target 'OpenWatch' do
     pod 'Alamofire'
     pod 'DockProgress'
     pod 'SWXMLHash'
+    pod 'KeychainAccess'
 end

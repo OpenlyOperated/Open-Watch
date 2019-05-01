@@ -20,15 +20,24 @@ class OpenWatchEngine: NSObject {
      * Requires AWS keys to validate signature of digest files
      * Setup AWS SDK for when we use them
      */
-    init(awsAccessKey : String, awsSecretKey : String) {
+    init(awsAccessKey : String, awsSecretKey : String, awsRegion : String) {
         super.init()
         accessKey = awsAccessKey
         accessSecret = awsSecretKey
         credentialsProvider = AWSStaticCredentialsProvider.init(accessKey: accessKey, secretKey: accessSecret)
-    
-        let defaultServiceConfiguration = AWSServiceConfiguration(region: AWSRegionType.USEast1, credentialsProvider: credentialsProvider)
-        AWSServiceManager.default().defaultServiceConfiguration = defaultServiceConfiguration
-      
+        //credentialsProvider?.refresh()
+        let region = CloudTrailService.getTypeFromRegion(region: awsRegion.lowercased())
+        
+        let defaultServiceConfiguration = AWSServiceConfiguration(region: region, credentialsProvider: credentialsProvider)
+        
+        AWSS3TransferUtility.remove(forKey: "\(OpenWatchEngine.sessionKey)")
+        AWSS3.remove(forKey: "\(OpenWatchEngine.sessionKey)")
+        
+        OpenWatchEngine.sessionKey = OpenWatchEngine.sessionKey + 1
+        
+        AWSS3TransferUtility.register(with: defaultServiceConfiguration!, forKey: "\(OpenWatchEngine.sessionKey)")
+        AWSS3.register(with: defaultServiceConfiguration!, forKey: "\(OpenWatchEngine.sessionKey)")
+        
         calculateDownloadTask.estimatedUnitsOfWork = 200
         calculateDownloadTask.taskName = "Calculating download size"
         downloadTask.estimatedUnitsOfWork = 1500
@@ -84,11 +93,27 @@ class OpenWatchEngine: NSObject {
         self.auditTask.tasks = [processDigestsTask, processLogsTask]
         
         DispatchQueue.global().async {
+            var didGetAccountID = false
+            CloudTrailService.getAccountID(credentialsProvider: self.credentialsProvider!, region: "us-east-1", completion: { accountID in
+                self.accountID = accountID
+                didGetAccountID = true
+            })
+            
+            while !didGetAccountID {
+                sleep(1)
+            }
+            
+            if self.accountID == nil {
+                self.failAbilityToAudit(reason: "Could not retrieve Account ID")
+                return
+            }
+            
             if self.shouldDownload {
                 self.auditTask.tasks = [self.calculateDownloadTask, self.downloadTask, self.processDigestsTask, self.processLogsTask]
                 self.findAndDownloadAllFiles()
+                
+                if self.didFailAbilityToAudit() { return }
             }
-            
             
             self.processDigests()
             auditFinished()
@@ -118,7 +143,6 @@ class OpenWatchEngine: NSObject {
         
     }
     
-    
     //MARK: - CloudTrail Digest
     /*
         * Requires a rigid directory structure
@@ -137,10 +161,24 @@ class OpenWatchEngine: NSObject {
         publicKeys.removeAll()
         rootSignatures.removeAll()
         
+        //determine Account ID
+        let accountPath = "\(self.rootFolderPath)AWSLogs/"
+        guard let accountIDs = try? FileManager.default.contentsOfDirectory(atPath: accountPath) else {
+            self.failAbilityToAudit(reason: "Could not find Account ID in directory structure.")
+            return
+        }
+        let sortedIDs = accountIDs.sorted { $0 > $1 }
+        accountID = sortedIDs.first
+        
+        if accountID == nil {
+            self.failAbilityToAudit(reason: "Could not find Account ID in directory structure.")
+            return
+        }
+        
         for region in regions {
             self.setupDigestProcessingQueue.addOperation {
                 if self.didFailAbilityToAudit() {return}
-                let regionPath = "\(self.rootFolderPath)AWSLogs/\(self.accountID)/CloudTrail-Digest/\(region)/"
+                let regionPath = "\(self.rootFolderPath)AWSLogs/\(self.accountID!)/CloudTrail-Digest/\(region)/"
                 
                 guard let enumerator:FileManager.DirectoryEnumerator = fileManager.enumerator(atPath: regionPath) else {
                     self.failAbilityToAudit(reason: "Could not find region directory structure.")
@@ -154,7 +192,7 @@ class OpenWatchEngine: NSObject {
                 
                 var firstDigestInChain = reversedFiles.first
                 firstDigestInChain = firstDigestInChain?.replacingOccurrences(of: self.rootFolderPath, with: "")
-                firstDigestInChain = "AWSLogs/\(self.accountID)/CloudTrail-Digest/\(region)/\(firstDigestInChain!)"
+                firstDigestInChain = "AWSLogs/\(self.accountID!)/CloudTrail-Digest/\(region)/\(firstDigestInChain!)"
                 
                 var rootSignatureCompleted = false
                 var regionRootSignature : RegionRootSignature? = nil
@@ -284,7 +322,7 @@ class OpenWatchEngine: NSObject {
     }
     
     func getMetadataSignature(forKey: String, completion: @escaping(_ signature: String?) -> Void) -> Void {
-        let s3 = AWSS3.default()
+        let s3 = AWSS3.s3(forKey: "\(OpenWatchEngine.sessionKey)")
         let request = AWSS3HeadObjectRequest()
         request?.bucket = cloudTrailBucket
         request?.key = forKey
@@ -555,7 +593,8 @@ class OpenWatchEngine: NSObject {
      * Recursive method to get all files from a bucket
      */
     func getAllFilesFromS3(prefix : String?, marker: String?, result: @escaping (_ keys: [AWSS3Object]) -> Void) {
-        let s3 = AWSS3.default()
+        let s3 = AWSS3.s3(forKey: "\(OpenWatchEngine.sessionKey)")
+        
         
         let objReq = AWSS3ListObjectsRequest.init()
         objReq?.bucket = self.cloudTrailBucket
@@ -596,8 +635,8 @@ class OpenWatchEngine: NSObject {
     }
     
     func findAndDownloadAllFiles() -> Void {
+        let transferUtility = AWSS3TransferUtility.s3TransferUtility(forKey: "\(OpenWatchEngine.sessionKey)")
         
-        let transferUtility = AWSS3TransferUtility.default()
         transferUtility?.getAllTasks().continue({ task in
             var res = task?.result as! Array<AWSS3TransferUtilityDownloadTask>
             for t in res {
@@ -634,8 +673,8 @@ class OpenWatchEngine: NSObject {
             
             for region in OpenWatchEngine.supportedRegions {
                 self.calculateDownloadTask.numberOfSubtasks += 2 //one for logs, one for digest
-                let prefixLogs = "AWSLogs/\(self.accountID)/CloudTrail/\(region)/\(year)/\(String(format: "%02d", month))/\(String(format: "%02d", day))"
-                let prefixDigest = "AWSLogs/\(self.accountID)/CloudTrail-Digest/\(region)/\(year)/\(String(format: "%02d", month))/\(String(format: "%02d", day))"
+                let prefixLogs = "AWSLogs/\(self.accountID!)/CloudTrail/\(region)/\(year)/\(String(format: "%02d", month))/\(String(format: "%02d", day))"
+                let prefixDigest = "AWSLogs/\(self.accountID!)/CloudTrail-Digest/\(region)/\(year)/\(String(format: "%02d", month))/\(String(format: "%02d", day))"
                 
                 downloadQueueProcessingQueue.addOperation {
                     var completedTask = false
@@ -736,6 +775,11 @@ class OpenWatchEngine: NSObject {
             }
         }
         
+        sleep(5)
+        if logFiles.count == 0 || digestFiles.count == 0 {
+            self.failAbilityToAudit(reason: "No logs or digests (Is CloudTrail Region correct?)")
+            return
+        }
         while(!downloadTask.isFinished()) {
             sleep(1)
             if self.didFailAbilityToAudit() { return }
@@ -790,8 +834,10 @@ class OpenWatchEngine: NSObject {
     
     var furthestStartLog : Int = 0
     
-    let accountID = "804561292808" //need to fetch this from AWS in the future
+    var accountID : String? = nil //need to fetch this from AWS in the future
     //if changing account ID, also have to change endpoint AWSRegionType in init of engine
+    
+    static var sessionKey : Int = 0
     
     static let supportedRegions = ["ap-northeast-1", "ap-northeast-2", "ap-northeast-3", "ap-south-1", "ap-southeast-1", "ap-southeast-2", "ca-central-1", "eu-central-1", "eu-west-1", "eu-west-2", /*"eu-west-3",*/ "sa-east-1", "us-east-1", "us-east-2", "us-west-1", "us-west-2"]
     

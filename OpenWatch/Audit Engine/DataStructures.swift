@@ -77,7 +77,7 @@ class AuditTask {
         
         var currentTaskProgress = 0.0
         if !currentTask.isFinished() { //if it is finished, will be under units completed
-            currentTaskProgress = Double(currentTask.estimatedUnitsOfWork * currentTask.completedSubtasks) / Double(currentTask.numberOfSubtasks)
+            currentTaskProgress = Double(currentTask.estimatedUnitsOfWork * currentTask.completedSubtasks) / Double(max(1, currentTask.numberOfSubtasks))
         }
         
         return 100.0 * ((Double(unitsCompleted) + currentTaskProgress)

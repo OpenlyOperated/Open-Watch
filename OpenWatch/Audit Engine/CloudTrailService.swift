@@ -99,13 +99,56 @@ class CloudTrailService: AWSService {
         return AWSRegionType.USWest1
     }
     
+    static func getAccountID(credentialsProvider : AWSStaticCredentialsProvider, region: String, completion: @escaping (_ accountID: String?) -> Void) -> Void {
+        
+        let publicKeyEndpoint = "https://sts.\(region).amazonaws.com"
+        
+        let regionType = getTypeFromRegion(region: region)
+        let endPoint = AWSEndpoint(region: regionType, service: AWSServiceType.STS, url: URL.init(string: publicKeyEndpoint))
+        let signer = AWSSignatureV4Signer(credentialsProvider: credentialsProvider, endpoint:endPoint)
+        let request = NSMutableURLRequest(url: NSURL(string: "\(publicKeyEndpoint)")! as URL)
+        
+        request.setValue(NSDate.init().aws_stringValue(AWSDateISO8601DateFormat2), forHTTPHeaderField: "X-Amz-Date")
+        var body: [String: String] = [:]
+        body = ["Action": "GetCallerIdentity", "Version": "2011-06-15"]
+        request.httpBody = body.map{"\($0)=\($1)"}.joined(separator: "&").data(using: .utf8)
+        request.httpMethod = "POST"
+        signer?.interceptRequest(request).continue({ task in
+            
+            print("Tasking \(request.allHTTPHeaderFields)")
+            
+            do {
+                // Perform the request
+                var response: AutoreleasingUnsafeMutablePointer<URLResponse?>? = nil
+                let data = try NSURLConnection.sendSynchronousRequest(request as URLRequest, returning: response)
+                
+                
+                var str = String(data: data, encoding: String.Encoding.utf8) as String!
+                
+                let xml = SWXMLHash.parse(str!)
+                
+                var publicKeys = [PublicKey]()
+                let accountID = xml["GetCallerIdentityResponse"]["GetCallerIdentityResult"]["Account"].element?.text
+                
+                completion(accountID)
+            } catch {
+                print("Couldn't find Account ID")
+                completion(nil)
+            }
+            
+            return nil
+        })
+        
+    }
+    
     static func getPublicKeys(credentialsProvider : AWSStaticCredentialsProvider, region: String, completion: @escaping (_ publicKeys: [PublicKey]) -> Void) -> Void {
         let publicKeyEndpoint = "https://cloudtrail.\(region).amazonaws.com"
         
+        let startTime = "2018-11-01T20%3A30%3A00.000Z"
         let regionType = getTypeFromRegion(region: region)
         let endPoint = AWSEndpoint(region: regionType, service: AWSServiceType.cloudTrail, url: URL.init(string: publicKeyEndpoint))
         let signer = AWSSignatureV4Signer(credentialsProvider: credentialsProvider, endpoint:endPoint)
-        let request = NSMutableURLRequest(url: NSURL(string: "\(publicKeyEndpoint)/?Action=ListPublicKeys")! as URL)
+        let request = NSMutableURLRequest(url: NSURL(string: "\(publicKeyEndpoint)/?Action=ListPublicKeys&StartTime=\(startTime)")! as URL)
         
         request.setValue(NSDate.init().aws_stringValue(AWSDateISO8601DateFormat2), forHTTPHeaderField: "X-Amz-Date")
         
