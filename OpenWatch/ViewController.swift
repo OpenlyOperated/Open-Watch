@@ -74,6 +74,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
         engine.sshState = (sshCheckbox?.state)!
         engine.flowLogState = (flowLogsCheckbox?.state)!
         engine.runCommandState = (runCommandCheckbox?.state)!
+        engine.deleteLogsState = (deleteLogsCheckbox?.state)!
         self.violationTable?.reloadData()
         self.sourceCodeTable?.reloadData()
         
@@ -178,6 +179,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
             self.safeBringupCheckbox?.isEnabled = false
             self.roleCheckbox?.isEnabled = false
             self.sshCheckbox?.isEnabled = false
+            self.deleteLogsCheckbox?.isEnabled = false
             self.analyzeButton?.isEnabled = false
             self.startDate?.isEnabled = false
             self.endDate?.isEnabled = false
@@ -196,6 +198,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
             self.safeBringupCheckbox?.isEnabled = true
             self.roleCheckbox?.isEnabled = true
             self.sshCheckbox?.isEnabled = true
+            self.deleteLogsCheckbox?.isEnabled = true
             self.analyzeButton?.isEnabled = true
             self.startDate?.isEnabled = true
             self.endDate?.isEnabled = false //eventually allow end date selection
@@ -346,6 +349,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     @IBOutlet var sshCheckbox : NSButton?
     @IBOutlet var flowLogsCheckbox : NSButton?
     @IBOutlet var runCommandCheckbox : NSButton?
+    @IBOutlet var deleteLogsCheckbox : NSButton?
     
 }
 

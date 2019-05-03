@@ -458,6 +458,9 @@ class OpenWatchEngine: NSObject {
         if runCommandState == .on {
             checkForRunCommand(logFilePath: logFilePath, awsCall: awsCall)
         }
+        if deleteLogsState == .on {
+            checkForDeleteLogs(logFilePath: logFilePath, awsCall: awsCall)
+        }
         
         showDeployedCodeIfLatest(logFilePath: logFilePath, awsCall: awsCall)
     }
@@ -566,6 +569,18 @@ class OpenWatchEngine: NSObject {
     func checkForRunCommand(logFilePath: String, awsCall : APICall) -> Void {
         if awsCall.eventName == "SendCommand" {
             let vio = Violation.init(name: "Run command executed",
+                                     eventTime: awsCall.eventTime,
+                                     eventName: awsCall.eventName,
+                                     awsRegion: awsCall.awsRegion,
+                                     sourceIP: awsCall.sourceIPAddress,
+                                     filePath:logFilePath)
+            violations.append(vio)
+        }
+    }
+    
+    func checkForDeleteLogs(logFilePath: String, awsCall : APICall) -> Void {
+        if (awsCall.eventName == "DeleteLogGroup" || awsCall.eventName == "DeleteLogStream") {
+            let vio = Violation.init(name: "LogGroup/LogStream Deleted",
                                      eventTime: awsCall.eventTime,
                                      eventName: awsCall.eventName,
                                      awsRegion: awsCall.awsRegion,
@@ -830,6 +845,7 @@ class OpenWatchEngine: NSObject {
     var sshState = NSButton.StateValue.on
     var flowLogState = NSButton.StateValue.on
     var runCommandState = NSButton.StateValue.on
+    var deleteLogsState = NSButton.StateValue.on
     var credentialsProvider : AWSStaticCredentialsProvider? = nil
     
     var furthestStartLog : Int = 0
