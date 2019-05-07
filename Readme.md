@@ -24,7 +24,7 @@ Please keep in mind this involves parsing through over 5 gigabytes of log data a
 ## Results
 Ideally, the results look like this:
 
-![Successful Audit](https://s3.us-east-2.amazonaws.com/confirmedclients/OpenWatchOutput.png)
+![Successful Audit](https://github.com/OpenlyOperated/Open-Watch/raw/master/OpenWatchUI.png)
 
 If you had any issues, they will be listed out at the end of the audit (it may not complete the audit if the logs are corrupted or not present, so if you encounter an error please ensure that you have all the appropriate logs).
 
