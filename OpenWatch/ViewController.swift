@@ -284,8 +284,13 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
                     var title = cell.textField
                     var url = cell.viewWithTag(1) as? HyperlinkTextField
                     title?.stringValue = allKeys[row]
-                    url?.stringValue = engine.sourceRepos[allKeys[row]]!
-                    url?.href = engine.sourceRepos[allKeys[row]]!
+                    
+                    //modify URL to allow for S3 download for authenticated users
+                    if let rawURL = engine.sourceRepos[allKeys[row]] as? String {
+                        let downloadableURL = rawURL.replacingOccurrences(of: "s3.amazonaws.com/", with: "s3.console.aws.amazon.com/s3/object/")
+                        url?.stringValue = downloadableURL
+                        url?.href = downloadableURL
+                    }
                 }
                 else {
                     var title = cell.textField
