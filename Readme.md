@@ -20,8 +20,6 @@ To get started, download the source code (or binary). Once open, select the star
 
 Please keep in mind this involves parsing through over 5 gigabytes of log data and can take 30-60 minutes to run, depending on your Internet connection. Please make sure you have the latest logs to ensure the most accurate and up-to-date audit.
 
-TODO: Add UI for these components
-
 
 ## Results
 Ideally, the results look like this:
