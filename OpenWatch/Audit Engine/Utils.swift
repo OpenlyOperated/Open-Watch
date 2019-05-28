@@ -140,8 +140,9 @@ class Utils: NSObject {
                                           signature as CFData,
                                           &error)
         
-        print("Status: \(status) : Error here \(error)")
-
+        if status == false || error != nil {
+            print("Status: \(status) : Error here \(error)")
+        }
         return status;
     }
     

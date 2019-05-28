@@ -18,10 +18,19 @@ To get started, download the source code (or binary). Once open, select the star
 2) Change the hardcoded Account ID
 3) Change the AWS Endpoint Region to that of the AWS account
 
-Please keep in mind this involves parsing through over 5 gigabytes of log data and can take 30-60 minutes to run, depending on your Internet connection. Please make sure you have the latest logs to ensure the most accurate and up-to-date audit.
+Please keep in mind this involves parsing through gigabytes of log data and can take over an hour to run, depending on your Internet connection. Please make sure you have the latest logs to ensure the most accurate and up-to-date audit.
 
+We recommend downloading the log files as one compressed file from the audited website. Once uncompressed on your machine, you can select the logs folder in OpenWatch. Though Open Watch can download logs from S3 directly, it will take much longer to traverse the CloudTrail bucket and download each file.
+
+
+## How To Build
+
+1) Run pod install
+2) Open OpenWatch.xcworkspace
+3) Compile and run
 
 ## Results
+
 Ideally, the results look like this:
 
 ![Successful Audit](https://github.com/OpenlyOperated/Open-Watch/raw/master/OpenWatchUI.png)

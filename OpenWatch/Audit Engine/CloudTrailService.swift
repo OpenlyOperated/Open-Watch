@@ -28,7 +28,7 @@ class CloudTrailService: AWSService {
         var processedXML = false
         signer?.interceptRequest(request).continue({ task in
             
-            print("Tasking \(request.allHTTPHeaderFields)")
+            //print("Tasking \(request.allHTTPHeaderFields)")
             
             do {
                 // Perform the request
@@ -115,7 +115,7 @@ class CloudTrailService: AWSService {
         request.httpMethod = "POST"
         signer?.interceptRequest(request).continue({ task in
             
-            print("Tasking \(request.allHTTPHeaderFields)")
+            //print("Tasking \(request.allHTTPHeaderFields)")
             
             do {
                 // Perform the request
@@ -154,7 +154,7 @@ class CloudTrailService: AWSService {
         
         signer?.interceptRequest(request).continue({ task in
             
-            print("Tasking \(request.allHTTPHeaderFields)")
+            //print("Tasking \(request.allHTTPHeaderFields)")
             
             do {
                 // Perform the request

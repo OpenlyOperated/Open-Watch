@@ -28,15 +28,15 @@ class OpenWatchEngine: NSObject {
         //credentialsProvider?.refresh()
         let region = CloudTrailService.getTypeFromRegion(region: awsRegion.lowercased())
         
-        let defaultServiceConfiguration = AWSServiceConfiguration(region: region, credentialsProvider: credentialsProvider)
+        defaultServiceConfiguration = AWSServiceConfiguration(region: region, credentialsProvider: credentialsProvider)
         
-        AWSS3TransferUtility.remove(forKey: "\(OpenWatchEngine.sessionKey)")
+        endpoint = AWSEndpoint.init(region: defaultServiceConfiguration!.regionType, service: .S3, useUnsafeURL: false)
+        
         AWSS3.remove(forKey: "\(OpenWatchEngine.sessionKey)")
         
         OpenWatchEngine.sessionKey = OpenWatchEngine.sessionKey + 1
-        
-        AWSS3TransferUtility.register(with: defaultServiceConfiguration!, forKey: "\(OpenWatchEngine.sessionKey)")
-        AWSS3.register(with: defaultServiceConfiguration!, forKey: "\(OpenWatchEngine.sessionKey)")
+        AWSS3.register(with: defaultServiceConfiguration, forKey: "\(OpenWatchEngine.sessionKey)")
+
         
         calculateDownloadTask.estimatedUnitsOfWork = 200
         calculateDownloadTask.taskName = "Calculating download size"
@@ -108,9 +108,34 @@ class OpenWatchEngine: NSObject {
                 return
             }
             
+            self.s3Sync = S3Sync.init(
+                credentialsProvider: (self.defaultServiceConfiguration?.credentialsProvider)!,
+                accountID: self.accountID!,
+                bucket: self.cloudTrailBucket!,
+                endpoint: self.endpoint!,
+                downloadDirectory: self.downloadDirectory,
+                startDate: self.startDate,
+                endDate: self.endDate
+            )
+            
             if self.shouldDownload {
                 self.auditTask.tasks = [self.calculateDownloadTask, self.downloadTask, self.processDigestsTask, self.processLogsTask]
-                self.findAndDownloadAllFiles()
+                
+                self.s3Sync?.findAndDownloadAllFiles(
+                    progressUpdateCallback: { calculateTotalDownloadTasks, completedCalculateTotalDownloadTasks, totalDownloadTasks, completedDownloadTasks, errorMessage in
+                        
+                        self.calculateDownloadTask.numberOfSubtasks = calculateTotalDownloadTasks
+                        self.calculateDownloadTask.completedSubtasks = completedCalculateTotalDownloadTasks
+                        
+                        
+                        self.downloadTask.numberOfSubtasks = totalDownloadTasks
+                        self.downloadTask.completedSubtasks = completedDownloadTasks
+                        
+                        self.updateEstimatedPercentComplete()
+                        if let err = errorMessage {
+                            self.failAbilityToAudit(reason: err)
+                        }
+                })
                 
                 if self.didFailAbilityToAudit() { return }
             }
@@ -126,7 +151,7 @@ class OpenWatchEngine: NSObject {
     
     func failAbilityToAudit(reason: String) {
         failureToAuditReason = reason
-        
+        s3Sync?.shouldEndS3Sync = true
         //clear out all operations
         digestQueue.cancelAllOperations()
         logQueue.cancelAllOperations()
@@ -141,6 +166,30 @@ class OpenWatchEngine: NSObject {
 
         auditFinishedBlock?()
         
+    }
+    
+    private func allFilesInDirectory(path : String) -> [String]? {
+        let fileManager = FileManager.default
+        guard let regionEnumerator:FileManager.DirectoryEnumerator = fileManager.enumerator(atPath: path) else {
+            self.failAbilityToAudit(reason: "Could not find region directory structure.")
+            return nil
+        }
+        
+        var allReversedFiles = regionEnumerator.allObjects as! [String]
+        allReversedFiles = allReversedFiles.sorted { $0 > $1 }
+        
+        for index in stride(from: allReversedFiles.count - 1, through: 0, by: -1) {
+            let fileManager = FileManager.default
+            var isDir : ObjCBool = false
+            let file = allReversedFiles[index]
+            if fileManager.fileExists(atPath: "\(path)\(file)", isDirectory:&isDir) {
+                if isDir.boolValue {
+                    allReversedFiles.remove(at: index)
+                }
+            }
+        }
+        
+        return allReversedFiles
     }
     
     //MARK: - CloudTrail Digest
@@ -178,29 +227,52 @@ class OpenWatchEngine: NSObject {
         for region in regions {
             self.setupDigestProcessingQueue.addOperation {
                 if self.didFailAbilityToAudit() {return}
+                
+                let calendar = Calendar.current
+                
+                let year = calendar.component(.year, from: self.endDate)
+                let month = calendar.component(.month, from: self.endDate)
+                let day = calendar.component(.day, from: self.endDate)
+                
+                let endDatePath = "\(self.rootFolderPath)AWSLogs/\(self.accountID!)/CloudTrail-Digest/\(region)/\(year)/\(String(format: "%02d", month))/\(String(format: "%02d", day))"
                 let regionPath = "\(self.rootFolderPath)AWSLogs/\(self.accountID!)/CloudTrail-Digest/\(region)/"
                 
-                guard let enumerator:FileManager.DirectoryEnumerator = fileManager.enumerator(atPath: regionPath) else {
+                
+                guard let allFiles = self.allFilesInDirectory(path: regionPath) else {
                     self.failAbilityToAudit(reason: "Could not find region directory structure.")
                     return
                 }
                 
-                var reversedFiles = enumerator.allObjects as! [String]
-                reversedFiles = reversedFiles.sorted { $0 > $1 }
-
-                self.processDigestsTask.numberOfSubtasks += reversedFiles.count
+                guard let recentFiles = self.allFilesInDirectory(path: endDatePath) else {
+                    self.failAbilityToAudit(reason: "Could not find region directory structure.")
+                    return
+                }
                 
-                var firstDigestInChain = reversedFiles.first
+                if recentFiles.count == 0 {
+                    self.failAbilityToAudit(reason: "No digests found - error with download?")
+                    return
+                }
+                
+                var firstDigestInChain = recentFiles.first
+                
+                self.processDigestsTask.numberOfSubtasks += allFiles.count
+                
                 firstDigestInChain = firstDigestInChain?.replacingOccurrences(of: self.rootFolderPath, with: "")
-                firstDigestInChain = "AWSLogs/\(self.accountID!)/CloudTrail-Digest/\(region)/\(firstDigestInChain!)"
+                firstDigestInChain = "AWSLogs/\(self.accountID!)/CloudTrail-Digest/\(region)/\(year)/\(String(format: "%02d", month))/\(String(format: "%02d", day))/\(firstDigestInChain!)"
                 
                 var rootSignatureCompleted = false
                 var regionRootSignature : RegionRootSignature? = nil
                 self.getMetadataSignature(forKey: firstDigestInChain!, completion: { signature in
-                    regionRootSignature = RegionRootSignature(region: region, signature: signature!)
-                    self.rootSignatures.append(regionRootSignature!)
+                    if let sig = signature {
+                        regionRootSignature = RegionRootSignature(region: region, signature: sig)
+                        self.rootSignatures.append(regionRootSignature!)
+                        print("returned here for region \(region)")
+                    }
+                    else {
+                        self.failAbilityToAudit(reason: "Failed to get signature for \(firstDigestInChain!)")
+                        return
+                    }
                     rootSignatureCompleted = true
-                    print("returned here for region \(region)")
                 })
                 
                 while !rootSignatureCompleted {
@@ -208,7 +280,7 @@ class OpenWatchEngine: NSObject {
                     if self.didFailAbilityToAudit() { return }
                 }
                 
-                print("Finished here for region \(region), \(firstDigestInChain)")
+                //print("Finished here for region \(region), \(firstDigestInChain)")
                 self.digestQueue.addOperation {
                     if self.didFailAbilityToAudit() {return}
                     self.processDigestChain(region: region, firstDigestInChain: firstDigestInChain!, rsaSignature: (regionRootSignature?.signature)!, isRoot: true)
@@ -254,6 +326,9 @@ class OpenWatchEngine: NSObject {
     private func calculateDigestStartTime(region : String, digest : Digest) {
         let digestEndTime = digest.digestEndTime
         let awsDateFormat = DateFormatter()
+        awsDateFormat.locale = Locale(identifier: "en_US_POSIX")
+        awsDateFormat.calendar = Calendar.init(identifier: .iso8601)
+        
         awsDateFormat.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
         let stringGivenDate = awsDateFormat.date(from: digestEndTime!)
         let timeSinceNow = Int((stringGivenDate?.timeIntervalSinceNow)!)
@@ -263,6 +338,29 @@ class OpenWatchEngine: NSObject {
             furthestStartLog = abs(timeSinceNow)
         }
 
+    }
+    
+    private func validateLogOrRedownload(logPath : String) {
+        for _ in 0...100 {
+            let gzipURL = URL.init(fileURLWithPath: logPath)
+            if let content = try? Data(contentsOf: gzipURL), let gzipContent = content.isGzipped ? try? content.gunzipped() : content {
+                if let zipCall = try? JSONDecoder().decode(Records.self, from: gzipContent) {
+                    return //could decode into Record
+                }
+            }
+            
+            //if reached, try to re-download
+            let output = URL.init(fileURLWithPath: logPath)
+            if let startIndex = logPath.range(of: "AWSLogs/")?.lowerBound {
+                print("Trying to recover by downloading")
+                let key = String(logPath[startIndex...])
+                (s3Sync?.downloadFile(key: key, outputURL: output))!
+            }
+            else {
+                return
+            }
+            sleep(5)
+        }
     }
     
     /*
@@ -286,6 +384,7 @@ class OpenWatchEngine: NSObject {
                 for logFile in digest.logFiles! {
                     let logFilePath = "\(rootFolderPath)\(logFile.s3Object!)"
                     let logFileURL = URL.init(fileURLWithPath: logFilePath)
+                    validateLogOrRedownload(logPath: logFilePath)
                     if let logContent = Data.uncompressedContents(fileURL: logFileURL), let digestString = String.init(bytes: logContent, encoding: .utf8)  {
                         if logFile.hashValue != digestString.sha256() {
                             print("Wrong SHA-256 for File \(logFilePath)")
@@ -360,7 +459,7 @@ class OpenWatchEngine: NSObject {
         
         let dataSigningString = "\(dateString!)\n\(s3Bucket)/\(s3Object)\n\(sha256)\n\(previousSignature)"
         
-        var fingerprint = digest.digestPublicKeyFingerprint
+        let fingerprint = digest.digestPublicKeyFingerprint
         var publicKey : String? = nil
         for key in publicKeys {
             if key.fingerprint == fingerprint {
@@ -400,6 +499,9 @@ class OpenWatchEngine: NSObject {
         let digestEndTime = currentDigest.digestEndTime
         let awsDateFormat = DateFormatter()
         awsDateFormat.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+        awsDateFormat.locale = Locale(identifier: "en_US_POSIX")
+        awsDateFormat.calendar = Calendar.init(identifier: .iso8601)
+        
         let stringGivenDate = awsDateFormat.date(from: digestEndTime!)
         
         if stringGivenDate! >= startDate && currentDigest.previousDigestS3Object != nil {
@@ -425,7 +527,37 @@ class OpenWatchEngine: NSObject {
             }
             else {
                 print("Couldn't process log file: \(fullPath)\nDigest file: \(digestFilePath)\n\n")
-                violations.append(Violation(name: "Couldn't load record", eventTime: nil, eventName: nil, awsRegion: nil, sourceIP: nil, filePath:fullPath))
+                
+                let output = URL.init(fileURLWithPath: fullPath)
+                if let startIndex = fullPath.range(of: "AWSLogs/")?.lowerBound {
+                    print("Trying to recover by downloading")
+                    let key = String(fullPath[startIndex...])
+                    
+                    var success = false
+                    for _ in 0...100 {
+                        success = (s3Sync?.downloadFile(key: key, outputURL: output))!
+                        
+                        if success {
+                            if let content = try? Data(contentsOf: gzipURL), let gzipContent = content.isGzipped ? try? content.gunzipped() : content {
+                                if let zipCall = try? JSONDecoder().decode(Records.self, from: gzipContent) {
+                                    for (index, awsCall) in zipCall.records.enumerated() {
+                                        processAWSCall(logFilePath:fullPath, awsCall: awsCall)
+                                    }
+                                    break
+                                }
+                            }
+                        }
+                        sleep(5)
+                    }
+                    
+                    if !success {
+                        violations.append(Violation(name: "Couldn't load record", eventTime: nil, eventName: nil, awsRegion: nil, sourceIP: nil, filePath:fullPath))
+                    }
+                    
+                }
+                else {
+                    violations.append(Violation(name: "Couldn't load record", eventTime: nil, eventName: nil, awsRegion: nil, sourceIP: nil, filePath:fullPath))
+                }
             }
         }
         else {
@@ -603,206 +735,6 @@ class OpenWatchEngine: NSObject {
     }
  
     
-    //MARK: - S3 Sync
-    /*
-     * Recursive method to get all files from a bucket
-     */
-    func getAllFilesFromS3(prefix : String?, marker: String?, result: @escaping (_ keys: [AWSS3Object]) -> Void) {
-        let s3 = AWSS3.s3(forKey: "\(OpenWatchEngine.sessionKey)")
-        
-        
-        let objReq = AWSS3ListObjectsRequest.init()
-        objReq?.bucket = self.cloudTrailBucket
-        objReq?.delimiter = "\\"
-        objReq?.prefix = prefix
-        objReq?.marker = marker
-        
-        
-        s3?.listObjects(objReq).continue({ task in
-            if let listObjectsOutput = task?.result as? AWSS3ListObjectsOutput {
-                if listObjectsOutput.isTruncated.boolValue {
-                    usleep(250000) //delay for rate limiting
-                    self.getAllFilesFromS3(prefix: prefix, marker: listObjectsOutput.nextMarker, result: { keys in
-                        var obj = listObjectsOutput.contents as! [AWSS3Object]
-                        obj.append(contentsOf: keys)
-                        result(obj)
-                    })
-                }
-                else {
-                    if listObjectsOutput.contents != nil {
-                        let obj = listObjectsOutput.contents as! [AWSS3Object]
-                        result(obj)
-                    }
-                    else {
-                        result([])
-                    }
-                }
-            }
-            else {
-                result([]) //zero
-            }
-            if let e = task?.error {
-                print("Error listing objects \(e)")
-            }
-            
-            return nil
-        })
-    }
-    
-    func findAndDownloadAllFiles() -> Void {
-        let transferUtility = AWSS3TransferUtility.s3TransferUtility(forKey: "\(OpenWatchEngine.sessionKey)")
-        
-        transferUtility?.getAllTasks().continue({ task in
-            var res = task?.result as! Array<AWSS3TransferUtilityDownloadTask>
-            for t in res {
-                t.cancel() //clear all old tasks that can slow down process
-            }
-            print("Got all tasks with error \(task?.error)")
-            
-            return nil
-        })
-        
-        
-        var currentProcessedDate = startDate
-        var logFiles = [AWSS3Object]()
-        var digestFiles = [AWSS3Object]()
-        
-        let fileManager = FileManager.default
-        do {
-            try fileManager.removeItem(atPath: downloadDirectory)
-        }
-        catch let error as NSError {
-            print("Could not delete folder: \(error)")
-        }
-        calculateDownloadTask.numberOfSubtasks = 1 //start at 1, the parent task to set up async calls
-        downloadTask.numberOfSubtasks = 1
-        calculateDownloadTask.completedSubtasks = 0
-        downloadQueueProcessingQueue.maxConcurrentOperationCount = 2 //limit to 2 because of AWS API limits
-        
-        while currentProcessedDate.timeIntervalSince(self.endDate) < 86399.999999 { //get up to 1 day ahead for time zones
-            let calendar = Calendar.current
-            
-            let year = calendar.component(.year, from: currentProcessedDate)
-            let month = calendar.component(.month, from: currentProcessedDate)
-            let day = calendar.component(.day, from: currentProcessedDate)
-            
-            for region in OpenWatchEngine.supportedRegions {
-                self.calculateDownloadTask.numberOfSubtasks += 2 //one for logs, one for digest
-                let prefixLogs = "AWSLogs/\(self.accountID!)/CloudTrail/\(region)/\(year)/\(String(format: "%02d", month))/\(String(format: "%02d", day))"
-                let prefixDigest = "AWSLogs/\(self.accountID!)/CloudTrail-Digest/\(region)/\(year)/\(String(format: "%02d", month))/\(String(format: "%02d", day))"
-                
-                downloadQueueProcessingQueue.addOperation {
-                    var completedTask = false
-                    self.getAllFilesFromS3(prefix: prefixLogs, marker: nil, result: { keys in
-                        //print("Log Prefix: \(prefixLogs) Log Keys: \(keys.count)")
-                        Utils.synced(self, closure: {
-                            logFiles.append(contentsOf: keys)
-                        })
-                        self.calculateDownloadTask.completedSubtasks += 1
-                        self.updateEstimatedPercentComplete()
-                        completedTask = true
-                    })
-                    
-                    while(!completedTask) {
-                        usleep(250000)
-                    }
-                }
-                
-                downloadQueueProcessingQueue.addOperation {
-                    var completedTask = false
-                    self.getAllFilesFromS3(prefix: prefixDigest, marker: nil, result: { keys in
-                        //print("Prefix: \(prefixLogs) Digest Keys: \(keys.count)")
-                        Utils.synced(self, closure: {
-                            digestFiles.append(contentsOf: keys)
-                        })
-                        self.calculateDownloadTask.completedSubtasks += 1
-                        self.updateEstimatedPercentComplete()
-                        completedTask = true
-                    })
-                    while(!completedTask) {
-                        usleep(250000)
-                    }
-                }
-                
-            }
-            
-            currentProcessedDate = Calendar.current.date(byAdding: .day, value: 1, to: currentProcessedDate)!
-            //print("Time interval here \(currentProcessedDate.timeIntervalSince(self.endDate))")
-        }
-        
-
-        sleep(5)
-        downloadQueueProcessingQueue.waitUntilAllOperationsAreFinished()
-        calculateDownloadTask.completedSubtasks += 1 //finished parent async queue setup task
-        while(!calculateDownloadTask.isFinished()) {
-            sleep(1)
-            if self.didFailAbilityToAudit() { return }
-        }
-        
-        
-        print("Got all files - \(logFiles.count)")
-        print("Got all digests - \(digestFiles.count)")
-        
-        logFiles.append(contentsOf: digestFiles)
-        
-        downloadTask.numberOfSubtasks = logFiles.count
-        calculateDownloadTask.markAsFinished()
-        self.updateEstimatedPercentComplete()
-        
-        //now download the files into a folder
-        //should try transfer utility??
-        
-        downloadQueueProcessingQueue.maxConcurrentOperationCount = 10 //limit to 2 because of AWS API limits
-        
-        let logFileChunks = logFiles.chunk(500)
-        for chunk in logFileChunks {
-            downloadQueueProcessingQueue.addOperation {
-                autoreleasepool {
-                    for obj in chunk {
-                        
-                        let outputDirectory = "\(self.downloadDirectory)/\(Utils.stripFileComponent(obj.key!))"
-                        let outputPath = "\(self.downloadDirectory)/\(obj.key!)"
-                        let outputURL = URL.init(fileURLWithPath: outputPath)
-                        let dReq = AWSS3TransferManagerDownloadRequest.init()
-                        dReq?.bucket = self.cloudTrailBucket
-                        dReq?.key =  obj.key
-                        dReq?.downloadingFileURL = outputURL
-                        
-                        do {
-                            try FileManager.default.createDirectory(atPath: outputDirectory, withIntermediateDirectories: true, attributes: nil)
-                        }
-                        catch let error as NSError {
-                            NSLog("Unable to create directory \(error.debugDescription)")
-                        }
-                        
-                        transferUtility?.download(to: outputURL, bucket: self.cloudTrailBucket!, key: obj.key, expression: nil, completionHander: { task, location, data, error in
-                            
-                            if error != nil {
-                                print("Download error \(String(describing: error))")
-                            }
-                            Utils.synced(self, closure: {
-                                self.downloadTask.completedSubtasks += 1
-                            })
-                            self.updateEstimatedPercentComplete()
-                        })
-                    }
-                }
-            }
-        }
-        
-        sleep(5)
-        if logFiles.count == 0 || digestFiles.count == 0 {
-            self.failAbilityToAudit(reason: "No logs or digests (Is CloudTrail Region correct?)")
-            return
-        }
-        while(!downloadTask.isFinished()) {
-            sleep(1)
-            if self.didFailAbilityToAudit() { return }
-        }
-        
-        print("Downloaded everything")
-    }
-    
     //MARK: - MISC
     func estimatedPercentageComplete() -> Double {
         return auditTask.estimatePercentageComplete()
@@ -838,6 +770,12 @@ class OpenWatchEngine: NSObject {
     var logQueue = OperationQueue.init()
     var setupDigestProcessingQueue = OperationQueue.init()
     var downloadQueueProcessingQueue = OperationQueue.init()
+    var downloadQueueAltProcessingQueue = OperationQueue.init()
+    var downloadQueueAltProcessingQueue2 = OperationQueue.init()
+    var downloadQueueAltProcessingQueue3 = OperationQueue.init()
+    var downloadQueueAltProcessingQueue4 = OperationQueue.init()
+    
+    var s3Sync : S3Sync?
     
     var getParametersState = NSButton.StateValue.on
     var safeBringupState = NSButton.StateValue.on
@@ -847,6 +785,8 @@ class OpenWatchEngine: NSObject {
     var runCommandState = NSButton.StateValue.on
     var deleteLogsState = NSButton.StateValue.on
     var credentialsProvider : AWSStaticCredentialsProvider? = nil
+    var defaultServiceConfiguration : AWSServiceConfiguration?
+    var endpoint : AWSEndpoint?
     
     var furthestStartLog : Int = 0
     

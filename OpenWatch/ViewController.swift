@@ -31,6 +31,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
         startDate?.maxDate = Date.init(timeIntervalSinceNow: 0) //max date is today
         endDate?.dateValue = Date.init(timeIntervalSinceNow: 0) //default end date is today
         endDate?.maxDate = Date.init(timeIntervalSinceNow: 0)
+        startDate?.maxDate = endDate?.dateValue
         sourceURL?.stringValue = ""
         
         if let key = keychain[kAWSKey], let secret = keychain[kAWSSecret] {
@@ -88,12 +89,10 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
             until: endDate,
             sourceFolderPath: localFolderPath,
             progressUpdateCallback: {
-                if self.updateUIQueue.operationCount == 0 {
-                    self.updateUIQueue.addOperation {
-                        usleep(200000)
-                        DispatchQueue.main.async { self.updateUI() }
-                    }
+                DispatchQueue.main.async {
+                    self.updateUI()
                 }
+                
             },
             auditFinished: {
                 DispatchQueue.main.async { self.updateUI(); }
@@ -201,7 +200,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
             self.deleteLogsCheckbox?.isEnabled = true
             self.analyzeButton?.isEnabled = true
             self.startDate?.isEnabled = true
-            self.endDate?.isEnabled = false //eventually allow end date selection
+            self.endDate?.isEnabled = true
             self.awsKey?.isEnabled = true
             self.awsSecret?.isEnabled = true
             self.awsRegion?.isEnabled = true
@@ -231,6 +230,10 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
             // User clicked on "Cancel"
             return
         }
+    }
+    
+    @IBAction func endDateChanged(sender : NSDatePicker) {
+        self.startDate?.maxDate = self.endDate?.dateValue
     }
     
     @IBAction func closeApp(sender : NSButton) {
@@ -325,7 +328,6 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     //MARK: - VARIABLES
     
     var engine : OpenWatchEngine!
-    var updateUIQueue = OperationQueue.init()
     var localFolderPath : String? = nil
     
     @IBOutlet var awsKey : NSTextField?

@@ -838,7 +838,7 @@
                                         </textFieldCell>
                                     </textField>
                                     <datePicker verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vhz-st-faH">
-                                        <rect key="frame" x="195" y="451" width="97" height="27"/>
+                                        <rect key="frame" x="195" y="451" width="100" height="31"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <datePickerCell key="cell" borderStyle="bezel" alignment="left" id="jAi-Xd-Q9X">
                                             <font key="font" size="12" name="Montserrat-Regular"/>
@@ -860,6 +860,9 @@
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                         </datePickerCell>
+                                        <connections>
+                                            <action selector="endDateChangedWithSender:" target="XfG-lQ-9wD" id="6LF-92-kcX"/>
+                                        </connections>
                                     </datePicker>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MLK-Ep-n8s">
                                         <rect key="frame" x="195" y="434" width="49" height="17"/>
@@ -991,13 +994,13 @@
                                     <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lKf-Xc-pHF">
                                         <rect key="frame" x="193" y="355" width="148" height="25"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <popUpButtonCell key="cell" type="push" title="us-east-1 (Northern Virginia)" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="O7q-OK-vvg" id="mOt-dO-8Mh">
+                                        <popUpButtonCell key="cell" type="push" title="us-east-1 (Northern Virginia)" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="O7q-OK-vvg" id="mOt-dO-8Mh">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="menu"/>
                                             <menu key="menu" id="Rzz-q7-peC">
                                                 <items>
-                                                    <menuItem title="us-east-1 (Northern Virginia)" identifier="us-east-1" id="O7q-OK-vvg"/>
-                                                    <menuItem title="us-west-1 (Northern California)" state="on" identifier="us-west-1" id="EvG-qQ-tT9"/>
+                                                    <menuItem title="us-east-1 (Northern Virginia)" state="on" identifier="us-east-1" id="O7q-OK-vvg"/>
+                                                    <menuItem title="us-west-1 (Northern California)" identifier="us-west-1" id="EvG-qQ-tT9"/>
                                                     <menuItem title="us-west-2 (Oregon)" identifier="us-west-2" id="4j7-p9-rvZ"/>
                                                 </items>
                                             </menu>

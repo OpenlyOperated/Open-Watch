@@ -18,6 +18,7 @@
 		A1996DBB21950BB200141724 /* MovableWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1996DBA21950BB200141724 /* MovableWindow.swift */; };
 		A1996DBD21950D4300141724 /* DataStructures.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1996DBC21950D4300141724 /* DataStructures.swift */; };
 		A1996DBF2196630100141724 /* OpenWatchEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1996DBE2196630100141724 /* OpenWatchEngine.swift */; };
+		A1DCC202229C1EB6009DE172 /* S3Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DCC201229C1EB6009DE172 /* S3Sync.swift */; };
 		A1F1964C21C07AE800900133 /* Credits in Resources */ = {isa = PBXBuildFile; fileRef = A1F1964B21C07AE800900133 /* Credits */; };
 		CFB77F5F76DE1639BCA4ACC8 /* Pods_OpenWatch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FFF1C69706003F8D1FEAFE2 /* Pods_OpenWatch.framework */; };
 /* End PBXBuildFile section */
@@ -63,6 +64,7 @@
 		A1996DBA21950BB200141724 /* MovableWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovableWindow.swift; sourceTree = "<group>"; };
 		A1996DBC21950D4300141724 /* DataStructures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStructures.swift; sourceTree = "<group>"; };
 		A1996DBE2196630100141724 /* OpenWatchEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenWatchEngine.swift; sourceTree = "<group>"; };
+		A1DCC201229C1EB6009DE172 /* S3Sync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = S3Sync.swift; sourceTree = "<group>"; };
 		A1F1964B21C07AE800900133 /* Credits */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Credits; sourceTree = SOURCE_ROOT; };
 		E0BCB4EDA04A6A3BD4D356B8 /* Pods-OpenWatch.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OpenWatch.release.xcconfig"; path = "Pods/Target Support Files/Pods-OpenWatch/Pods-OpenWatch.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -109,6 +111,7 @@
 				A1430656219D4CD800421EF4 /* Utils.swift */,
 				A1996DBE2196630100141724 /* OpenWatchEngine.swift */,
 				A143063F219C7D1200421EF4 /* CloudTrailService.swift */,
+				A1DCC201229C1EB6009DE172 /* S3Sync.swift */,
 			);
 			path = "Audit Engine";
 			sourceTree = "<group>";
@@ -378,6 +381,7 @@
 			files = (
 				A1996D91219507AB00141724 /* ViewController.swift in Sources */,
 				A1430640219C7D1200421EF4 /* CloudTrailService.swift in Sources */,
+				A1DCC202229C1EB6009DE172 /* S3Sync.swift in Sources */,
 				A1996DBB21950BB200141724 /* MovableWindow.swift in Sources */,
 				A1996DBD21950D4300141724 /* DataStructures.swift in Sources */,
 				A1996DBF2196630100141724 /* OpenWatchEngine.swift in Sources */,
