@@ -133,6 +133,7 @@ struct RequestParameters : Codable {
     let assumeRolePolicyDocument: PolicyDocument?
     let applicationName: String?
     let revision: Revision?
+    let userData: String?
     
     private enum CodingKeys: String, CodingKey {
         case instancesSet = "instancesSet"
@@ -140,6 +141,7 @@ struct RequestParameters : Codable {
         case assumeRolePolicyDocument = "assumeRolePolicyDocument"
         case applicationName = "applicationName"
         case revision = "revision"
+        case userData = "userData"
     }
     
     //policy document is sometimes a string with escaped JSON
@@ -165,6 +167,7 @@ struct RequestParameters : Codable {
             let data = string!.data(using: .utf8)
             assumeRolePolicyDocument = try JSONDecoder().decode(PolicyDocument.self, from: data!)
         }
+        userData = try values.decodeIfPresent(String.self, forKey: .userData)
     }
 }
 

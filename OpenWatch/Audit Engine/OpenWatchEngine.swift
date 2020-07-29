@@ -657,6 +657,7 @@ class OpenWatchEngine: NSObject {
     }
     
     func checkForSafeBringup(logFilePath: String, awsCall : APICall) {
+        // EC2 SSH check
         if awsCall.eventSource == "ec2.amazonaws.com" && awsCall.eventName == "RunInstances" {
             if let items = awsCall.requestParameters?.instancesSet?.items {
                 for (index, item) in items.enumerated() {
@@ -670,6 +671,34 @@ class OpenWatchEngine: NSObject {
                         violations.append(vio)
                     }
                 }
+            }
+        }
+        // Lightsail SSH check
+        if awsCall.eventSource == "lightsail.amazonaws.com" && awsCall.eventName == "CreateInstances" {
+            guard let userData = awsCall.requestParameters?.userData else {
+                let vio = Violation.init(name: "No UserData on Lightsail bringup",
+                                         eventTime: awsCall.eventTime,
+                                         eventName: awsCall.eventName,
+                                         awsRegion: awsCall.awsRegion,
+                                         sourceIP: awsCall.sourceIPAddress,
+                                         filePath: logFilePath)
+                violations.append(vio)
+                return
+            }
+            if (userData.contains("rm /home/ubuntu/.ssh/authorized_keys") &&
+                userData.contains("rm /root/.ssh/authorized_keys") &&
+                userData.contains("systemctl disable ssh.service") &&
+                userData.contains("systemctl stop ssh.service")) {
+                return
+            }
+            else {
+                let vio = Violation.init(name: "Lightsail disable SSH not detected",
+                                         eventTime: awsCall.eventTime,
+                                         eventName: awsCall.eventName,
+                                         awsRegion: awsCall.awsRegion,
+                                         sourceIP: awsCall.sourceIPAddress,
+                                         filePath: logFilePath)
+                violations.append(vio)
             }
         }
     }
