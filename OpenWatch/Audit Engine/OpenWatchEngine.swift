@@ -484,8 +484,24 @@ class OpenWatchEngine: NSObject {
         let result = Utils.verifyBytesSHA256withRSA(inputData: dataSigningString.data(using: .utf8)!, signature: digestSignature.dataFromHexString()!, publicKey: seckey!)
         
         if !result {
-            print("Failed RSA signature verification")
-            violations.append(Violation(name: "Corrupted Trail File", eventTime: nil, eventName: nil, awsRegion: nil, sourceIP: nil, filePath:fullPath))
+            print("Failed RSA signature verification for \(fullPath)")
+            print("Using backup verification method: Checking signature on S3.")
+            self.getMetadataSignature(forKey: s3Object, completion: { signature in
+                if let sig = signature {
+                    let result2 = Utils.verifyBytesSHA256withRSA(inputData: dataSigningString.data(using: .utf8)!, signature: sig.dataFromHexString()!, publicKey: seckey!)
+                    if (!result2) {
+                        self.violations.append(Violation(name: "Corrupted Trail File", eventTime: nil, eventName: nil, awsRegion: nil, sourceIP: nil, filePath:fullPath))
+                    }
+                    else {
+                        print("S3 signature check succeeded")
+                    }
+                }
+                else {
+                    self.violations.append(Violation(name: "Corrupted Trail File, S3 Head Failed", eventTime: nil, eventName: nil, awsRegion: nil, sourceIP: nil, filePath:fullPath))
+                    self.failAbilityToAudit(reason: "Failed to get signature from s3 for \(s3Object)")
+                    return
+                }
+            })
         }
         
     }
