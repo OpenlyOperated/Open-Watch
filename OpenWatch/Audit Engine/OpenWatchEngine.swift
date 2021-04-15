@@ -290,21 +290,45 @@ class OpenWatchEngine: NSObject {
         setupDigestProcessingQueue.waitUntilAllOperationsAreFinished()
         self.updateEstimatedPercentComplete()
         
-        for region in regions {
-            setupDigestProcessingQueue.addOperation {
-                var didCompleteCall = false
-                CloudTrailService.getPublicKeys(credentialsProvider: self.credentialsProvider!, region: region, completion: { regionKeys in
-                    print("Received keys \(region) : \(regionKeys.count)")
-                    self.publicKeys.append(contentsOf: regionKeys)
-                    didCompleteCall = true
-                })
-                
-                while !didCompleteCall {
-                    sleep(1)
-                    if self.didFailAbilityToAudit() { return }
+//        for region in regions {
+//            setupDigestProcessingQueue.addOperation {
+//                var didCompleteCall = false
+//                CloudTrailService.getPublicKeys(credentialsProvider: self.credentialsProvider!, region: region, completion: { regionKeys in
+//                    print("Received keys \(region) : \(regionKeys.count)")
+//                    self.publicKeys.append(contentsOf: regionKeys)
+//                    didCompleteCall = true
+//                })
+//
+//                while !didCompleteCall {
+//                    sleep(1)
+//                    if self.didFailAbilityToAudit() { return }
+//                }
+//            }
+//        }
+        
+        // read public keys from file, since there is a bug with AWS API list-public-keys
+        // this was prepopulated with (and can be validated with) AWS CLI:
+        // aws cloudtrail list-public-keys --start-time 2018-06-01T20:30:00.000Z --region "us-west-2"
+        if let filepath = Bundle.main.path(forResource: "PublicKeys", ofType: "json") {
+            do {
+                let contents = try String(contentsOfFile: filepath)
+                let json = try JSONSerialization.jsonObject(with: contents.data(using: .utf8)!, options: [])
+                if let object = json as? [String: Any] {
+                    for (region, publicKeyArray) in object {
+                        for item in publicKeyArray as! [Dictionary<String, AnyObject>] {
+                            publicKeys.append(PublicKey(region: region, key: item["Value"] as! String, fingerprint: item["Fingerprint"] as! String))
+                        }
+                    }
+                } else {
+                    print("JSON is not expected format")
                 }
+            } catch {
+                print("Public Key file couldn't be parsed")
             }
+        } else {
+            print("Public Key file not found")
         }
+        
         
         setupDigestProcessingQueue.waitUntilAllOperationsAreFinished()
         print("Received public keys: \(self.publicKeys.count)")
@@ -757,13 +781,16 @@ class OpenWatchEngine: NSObject {
     
     func checkForDeleteLogs(logFilePath: String, awsCall : APICall) -> Void {
         if (awsCall.eventName == "DeleteLogGroup" || awsCall.eventName == "DeleteLogStream") {
-            let vio = Violation.init(name: "LogGroup/LogStream Deleted",
-                                     eventTime: awsCall.eventTime,
-                                     eventName: awsCall.eventName,
-                                     awsRegion: awsCall.awsRegion,
-                                     sourceIP: awsCall.sourceIPAddress,
-                                     filePath:logFilePath)
-            violations.append(vio)
+            // don't count loggroup deletions performed by CloudFormation (not done by operator)
+            if (awsCall.sourceIPAddress != "cloudformation.amazonaws.com") {
+                let vio = Violation.init(name: "LogGroup/LogStream Deleted",
+                                         eventTime: awsCall.eventTime,
+                                         eventName: awsCall.eventName,
+                                         awsRegion: awsCall.awsRegion,
+                                         sourceIP: awsCall.sourceIPAddress,
+                                         filePath:logFilePath)
+                violations.append(vio)
+            }
         }
     }
     

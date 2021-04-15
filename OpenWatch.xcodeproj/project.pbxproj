@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3DC0AB022628157A007AD091 /* PublicKeys.json in Resources */ = {isa = PBXBuildFile; fileRef = 3DC0AB012628157A007AD091 /* PublicKeys.json */; };
 		A1430640219C7D1200421EF4 /* CloudTrailService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A143063F219C7D1200421EF4 /* CloudTrailService.swift */; };
 		A1430657219D4CD900421EF4 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1430656219D4CD800421EF4 /* Utils.swift */; };
 		A1996D8F219507AB00141724 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1996D8E219507AB00141724 /* AppDelegate.swift */; };
@@ -42,6 +43,7 @@
 
 /* Begin PBXFileReference section */
 		3B03804E550CA2B393E4FE4B /* Pods-OpenWatch.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OpenWatch.debug.xcconfig"; path = "Pods/Target Support Files/Pods-OpenWatch/Pods-OpenWatch.debug.xcconfig"; sourceTree = "<group>"; };
+		3DC0AB012628157A007AD091 /* PublicKeys.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = PublicKeys.json; sourceTree = "<group>"; };
 		5FB101F44DC586E52EF812DD /* Pods_OpenWatchTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OpenWatchTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FFF1C69706003F8D1FEAFE2 /* Pods_OpenWatch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OpenWatch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		85F4FC45CEFF369B1CDCB9A1 /* Pods_OpenWatchUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OpenWatchUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -108,6 +110,7 @@
 			isa = PBXGroup;
 			children = (
 				A1996DBC21950D4300141724 /* DataStructures.swift */,
+				3DC0AB012628157A007AD091 /* PublicKeys.json */,
 				A1430656219D4CD800421EF4 /* Utils.swift */,
 				A1996DBE2196630100141724 /* OpenWatchEngine.swift */,
 				A143063F219C7D1200421EF4 /* CloudTrailService.swift */,
@@ -303,6 +306,7 @@
 			files = (
 				A1F1964C21C07AE800900133 /* Credits in Resources */,
 				A1996D93219507AB00141724 /* Assets.xcassets in Resources */,
+				3DC0AB022628157A007AD091 /* PublicKeys.json in Resources */,
 				A1996D96219507AB00141724 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
